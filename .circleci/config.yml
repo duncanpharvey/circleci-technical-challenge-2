@@ -12,6 +12,8 @@ workflows:
 
 jobs:
   notify_slack:
+    docker:
+      - image: 'cimg/base:stable'
     steps:
       - slack/notify:
           event: fail
