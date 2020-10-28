@@ -7,18 +7,11 @@ orbs:
 workflows:
   heroku_deploy:
     jobs:
-      - deploy
-
-jobs:
-  deploy:
-    executor: heroku/default
-    steps:
-      - checkout
-      - heroku/install
-      - heroku/deploy-via-git
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
+      - heroku/deploy-via-git:
+          post-steps:
+            - slack/notify:
+                event: fail
+                template: basic_fail_1
+            - slack/notify:
+                event: pass
+                template: success_tagged_deploy_1
