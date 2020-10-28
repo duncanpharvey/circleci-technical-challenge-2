@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   heroku: circleci/heroku@1.2.3
+  node: circleci/node@4.1.0
   slack: circleci/slack@4.1.1
 
 workflows:
