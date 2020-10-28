@@ -8,9 +8,7 @@ workflows:
   deploy:
     jobs:
       - heroku/deploy-via-git
-      - notify_slack:
-        requires:
-          - heroku/deploy-via-git
+      - notify_slack
 
 jobs:
   notify_slack:
