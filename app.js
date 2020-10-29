@@ -8,4 +8,9 @@ app.get("/", function(req, res) {
 app.use("/public", express.static(`${__dirname}/public`));
 
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`listening on port ${port}`)); // use port if provided, otherwise use 5000
+const server = app.listen(port); // use port if provided, otherwise use 5000
+
+module.exports = {
+    port: port,
+    server: server
+}

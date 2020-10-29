@@ -1,0 +1,43 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 32px;
+    -webkit-font-smoothing: antialiased;
+}
+
+div {
+    text-align: center;
+}
+
+#button {
+    background-color: #27A0B6;
+    border-color:  #27A0B6;
+    border-style: solid;
+    border-radius: 8px;
+    border-width: 2px;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1em;
+    height: 100px;
+    margin: 12px;
+    letter-spacing: 1px;
+    width: 300px;
+    transition: opacity 0.1s linear;
+}
+
+#button:active {
+    background-color: #FFFFFF;
+    color: #27A0B6;
+}
+
+#button:focus {
+    outline: none;
+}
+
+#hidden-text {
+    transition: opacity 0.2s linear;
+}
