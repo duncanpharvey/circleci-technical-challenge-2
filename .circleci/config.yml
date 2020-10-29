@@ -29,4 +29,5 @@ jobs:
     executor: lighthouse-check/default
     steps:
       - lighthouse-check/audit:
+          slackWebhookUrl: $LIGHTHOUSE_CHECK_SLACK_WEBHOOK_URL
           urls: 'https://circleci-tech-challenge-dh-2.herokuapp.com/'
