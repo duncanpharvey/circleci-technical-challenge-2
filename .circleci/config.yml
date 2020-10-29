@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   heroku: circleci/heroku@1.2.3
+  lighthouse-check: foo-software/lighthouse-check@0.0.8
   node: circleci/node@4.1.0
   slack: circleci/slack@4.1.1
 
@@ -19,3 +20,13 @@ workflows:
             - slack/notify:
                 event: pass
                 template: success_tagged_deploy_1
+      - lighthouse:
+          requires:
+            - heroku/deploy-via-git
+
+jobs:
+  lighthouse:
+    executor: lighthouse-check/default
+    steps:
+      - lighthouse-check/audit:
+          urls: 'https://circleci-tech-challenge-dh-2.herokuapp.com/'
