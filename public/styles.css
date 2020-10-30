@@ -12,9 +12,7 @@ div {
     text-align: center;
 }
 
-#button {
-    background-color: #27A0B6;
-    border-color:  #27A0B6;
+button {
     border-style: solid;
     border-radius: 8px;
     border-width: 2px;
@@ -26,8 +24,12 @@ div {
     margin: 12px;
     letter-spacing: 1px;
     position: relative;
-    width: 300px;
-    transition: opacity 0.1s linear;
+    width: 200px;
+}
+
+#button {
+    background-color: #27A0B6;
+    border-color:  #27A0B6;
 }
 
 #button:active {
@@ -35,10 +37,26 @@ div {
     color: #27A0B6;
 }
 
-#button:focus {
-    outline: none;
+#silly-button.start {
+    background-color: green;
+    border-color:green;
 }
 
-#hidden-text {
-    transition: opacity 0.2s linear;
+#silly-button.stop {
+    background-color: red;
+    border-color: red;
+}
+
+#silly-button.start:active {
+    background-color: #FFFFFF;
+    color: green;
+}
+
+#silly-button.stop:active {
+    background-color: #FFFFFF;
+    color: red;
+}
+
+button:focus {
+    outline: none;
 }

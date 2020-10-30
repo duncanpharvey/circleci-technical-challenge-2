@@ -1,24 +1,57 @@
-document.addEventListener('DOMContentLoaded', initializeEventListeners);
-
-function initializeEventListeners() {
+document.addEventListener('DOMContentLoaded', () => {
     listenForButtonClick();
     listenForMouseMove();
-}
+});
 
 function listenForButtonClick() {
     document.querySelector('#button').addEventListener('click', () => {
-        const textStyle = document.querySelector('#hidden-text').style;
-        textStyle.setProperty('opacity', 1 - textStyle.getPropertyValue('opacity'));
+        const text = document.querySelector('#hidden-text');
+        text.hidden = !text.hidden;
     });
 }
 
 function listenForMouseMove() {
     const button = document.querySelector('#button');
+    const sillyButton = document.querySelector('#silly-button');
     button.style.left = '0px';
     button.style.top = '0px';
     const left_offset = button.offsetLeft;
     const top_offset = button.offsetTop;
-    const padding = 30;
+    const paddingX = 40;
+    const paddingY = 70;
+    var total_distance = 0;
+    var silly = false;
+
+    function startSilliness() {
+        if (silly) return;
+        document.addEventListener('mousemove', moveButton);
+        sillyButton.addEventListener('click', stopSilliness);
+        sillyButton.removeEventListener('click', startSilliness);
+        button.textContent = 'Click!';
+        sillyButton.textContent = 'Stop Silliness!';
+        sillyButton.classList = ['stop'];
+        silly = true;
+    }
+
+    function stopSilliness() {
+        if (!silly) return;
+        document.removeEventListener('mousemove', moveButton);
+        sillyButton.removeEventListener('click', stopSilliness);
+        sillyButton.addEventListener('click', startSilliness);
+        button.style.left = '0px';
+        button.style.top = '0px';
+        button.textContent = 'Ok, Click now!';
+        sillyButton.textContent = 'Start Silliness!';
+        sillyButton.classList = ['start'];
+        silly = false;
+    }
+
+    function showSillyButton() {
+        sillyButton.hidden = false;
+    }
+
+    startSilliness();
+    window.setTimeout(showSillyButton, 30000);
 
     /*
         left = button.offsetLeft
@@ -33,36 +66,35 @@ function listenForMouseMove() {
             button.offsetTop < 0 ||
             button.offsetLeft + button.offsetWidth > window.innerWidth ||
             button.offsetTop + button.offsetHeight > window.innerHeight) {
-            button.style.left = `${random(window.innerWidth - (2 * button.offsetWidth) - (4 * padding), button.offsetWidth + (2 * padding)) - left_offset}px`;
-            button.style.top = `${random(window.innerHeight - (2 * button.offsetHeight) - (4 * padding), button.offsetHeight + (2 * padding)) - top_offset}px`;
+            button.style.left = `${random(window.innerWidth - (2 * button.offsetWidth) - (4 * paddingX), button.offsetWidth + (2 * paddingX)) - left_offset}px`;
+            button.style.top = `${random(window.innerHeight - (2 * button.offsetHeight) - (4 * paddingY), button.offsetHeight + (2 * paddingY)) - top_offset}px`;
         }
     }
 
     var timer;
-
-    document.addEventListener('mousemove', (event) => {
+    function moveButton(event) {
         if (timer) window.clearTimeout(timer);
 
         timer = window.setTimeout(() => {
-            var x = event.clientX;
-            var y = event.clientY;
-
-            while (
-                x > button.offsetLeft - padding &&
-                y > button.offsetTop - padding &&
-                x < button.offsetLeft + button.offsetWidth + padding &&
-                y < button.offsetTop + button.offsetHeight + padding
-            ) {
+            if (Math.sqrt((((button.offsetLeft + (button.offsetWidth / 2) - event.clientX) ** 2) / ((paddingX + (button.offsetWidth / 2)) ** 2)) + (((button.offsetTop + (button.offsetHeight / 2) - event.clientY) ** 2)) / ((paddingY + (button.offsetHeight / 2)) ** 2)) <= 1) {
                 var centerX = button.offsetLeft + (button.offsetWidth / 2);
                 var centerY = button.offsetTop + (button.offsetHeight / 2);
-                var dist = Math.sqrt(((centerX - x) ** 2) + ((centerY - y) ** 2));
+                var distance = Math.sqrt(((centerX - event.clientX) ** 2) + ((centerY - event.clientY) ** 2));
 
-                button.style.left = `${parseInt(button.style.left.replace('px', '')) + (centerX - x) / (dist / 3)}px`;
-                button.style.top = `${parseInt(button.style.top.replace('px', '')) + (centerY - y) / (dist / 3)}px`;
-                checkBorders();
+                var right_step = (centerX - event.clientX) / ((distance / 2) ** 1 / 2);
+                var down_step = (centerY - event.clientY) / ((distance / 6) ** 1 / 2);
+
+                var left_pos = parseInt(button.style.left.replace('px', '')) + right_step;
+                var top_pos = parseInt(button.style.top.replace('px', '')) + down_step;
+
+                total_distance += Math.sqrt((right_step ** 2) + (down_step ** 2));
+                if (total_distance > 2000 && sillyButton.hidden) showSillyButton();
+
+                button.style.left = `${left_pos}px`;
+                button.style.top = `${top_pos}px`;
             }
         }, 2);
-    });
+    }
 }
 
 function random(min, max) {
