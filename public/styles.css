@@ -25,6 +25,7 @@ div {
     height: 100px;
     margin: 12px;
     letter-spacing: 1px;
+    position: relative;
     width: 300px;
     transition: opacity 0.1s linear;
 }
