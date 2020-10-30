@@ -22,10 +22,13 @@ function listenForMouseMove() {
     var totalDistance = 0;
     var silly = false;
 
+    const timeThreshold = 20000;
+    const distanceThreshold = 2000;
+
     startSilliness();
 
-    // show button to stop if threshold distance hasn't been exceeded and 30 seconds have passed
-    window.setTimeout(showSillyToggleButton, 30000);
+    // show button to stop if threshold distance hasn't been exceeded and time threshold has passed
+    window.setTimeout(showSillyToggleButton, timeThreshold);
 
     function startSilliness() {
         if (silly) return;
@@ -81,7 +84,7 @@ function listenForMouseMove() {
 
             // track total distance traveled by the box. Show button to stop once it exceeds the threshold
             totalDistance += Math.sqrt((rightStep ** 2) + (downStep ** 2));
-            if (totalDistance > 2400 && sillyToggleButton.hidden) showSillyToggleButton();
+            if (totalDistance > distanceThreshold && sillyToggleButton.hidden) showSillyToggleButton();
 
 
             // send the button back to the middle of the screen if it disappears across any of the window borders
