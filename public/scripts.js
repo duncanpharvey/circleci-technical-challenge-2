@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function listenForButtonClick() {
     document.querySelector('#button').addEventListener('click', () => {
         const text = document.querySelector('#hidden-text');
-        text.hidden = !text.hidden;
+        text.hidden = !text.hidden; // toggle hidden status of text when button is clicked
     });
 }
 
@@ -17,16 +17,21 @@ function listenForMouseMove() {
     button.style.top = '0px';
     const left_offset = button.offsetLeft;
     const top_offset = button.offsetTop;
-    const paddingX = 40;
-    const paddingY = 70;
+    const paddingX = 80;
+    const paddingY = 120;
     var total_distance = 0;
     var silly = false;
+
+    startSilliness();
+
+    // show button to stop if threshold distance hasn't been exceeded and 30 seconds have passed
+    window.setTimeout(showSillyButton, 30000);
 
     function startSilliness() {
         if (silly) return;
         document.addEventListener('mousemove', moveButton);
-        sillyButton.addEventListener('click', stopSilliness);
         sillyButton.removeEventListener('click', startSilliness);
+        sillyButton.addEventListener('click', stopSilliness);
         button.textContent = 'Click!';
         sillyButton.textContent = 'Stop Silliness!';
         sillyButton.classList = ['stop'];
@@ -50,9 +55,6 @@ function listenForMouseMove() {
         sillyButton.hidden = false;
     }
 
-    startSilliness();
-    window.setTimeout(showSillyButton, 30000);
-
     /*
         left = button.offsetLeft
         top = button.offsetTop
@@ -60,43 +62,41 @@ function listenForMouseMove() {
         bottom = button.offsetTop + button.offsetHeight
     */
 
-    function checkBorders() {
-        if (
-            button.offsetLeft < 0 ||
-            button.offsetTop < 0 ||
-            button.offsetLeft + button.offsetWidth > window.innerWidth ||
-            button.offsetTop + button.offsetHeight > window.innerHeight) {
-            button.style.left = `${random(window.innerWidth - (2 * button.offsetWidth) - (4 * paddingX), button.offsetWidth + (2 * paddingX)) - left_offset}px`;
-            button.style.top = `${random(window.innerHeight - (2 * button.offsetHeight) - (4 * paddingY), button.offsetHeight + (2 * paddingY)) - top_offset}px`;
-        }
-    }
-
-    var timer;
     function moveButton(event) {
-        if (timer) window.clearTimeout(timer);
+        // check if the cursor is inside an ellipse with a width and height of the button (plus padding)
+        while (Math.sqrt((((button.offsetLeft + (button.offsetWidth / 2) - event.clientX) ** 2) / ((paddingX + (button.offsetWidth / 2)) ** 2)) + (((button.offsetTop + (button.offsetHeight / 2) - event.clientY) ** 2)) / ((paddingY + (button.offsetHeight / 2)) ** 2)) <= 1) {
+            var dist = Math.sqrt(((button.offsetLeft + (button.offsetWidth / 2) - event.clientX)) ** 2 + ((button.offsetTop + (button.offsetHeight / 2) - event.clientY)) ** 2);
+            
+            // take a step away from the cursor along the imaginary line connecting the center of the button and the cursor
+            // scale step based on distance from cursor to center of button (nothing significant about the factor of 3, it seemed to work best)
+            var right_step = (button.offsetLeft + (button.offsetWidth / 2) - event.clientX) * 3 / dist;
+            var down_step = (button.offsetTop + (button.offsetHeight / 2) - event.clientY) * 3 / dist;
 
-        timer = window.setTimeout(() => {
-            if (Math.sqrt((((button.offsetLeft + (button.offsetWidth / 2) - event.clientX) ** 2) / ((paddingX + (button.offsetWidth / 2)) ** 2)) + (((button.offsetTop + (button.offsetHeight / 2) - event.clientY) ** 2)) / ((paddingY + (button.offsetHeight / 2)) ** 2)) <= 1) {
-                var centerX = button.offsetLeft + (button.offsetWidth / 2);
-                var centerY = button.offsetTop + (button.offsetHeight / 2);
-                var distance = Math.sqrt(((centerX - event.clientX) ** 2) + ((centerY - event.clientY) ** 2));
+            // reposition button away from cursor
+            var left_pos = parseInt(button.style.left.replace('px', '')) + right_step;
+            var top_pos = parseInt(button.style.top.replace('px', '')) + down_step;
 
-                var right_step = (centerX - event.clientX) / ((distance / 2) ** 1 / 2);
-                var down_step = (centerY - event.clientY) / ((distance / 6) ** 1 / 2);
+            button.style.left = `${left_pos}px`;
+            button.style.top = `${top_pos}px`;
 
-                var left_pos = parseInt(button.style.left.replace('px', '')) + right_step;
-                var top_pos = parseInt(button.style.top.replace('px', '')) + down_step;
+            // track total distance traveled by the box. Show button to stop once it exceeds the threshold
+            total_distance += Math.sqrt((right_step ** 2) + (down_step ** 2));
+            if (total_distance > 2000 && sillyButton.hidden) showSillyButton();
 
-                total_distance += Math.sqrt((right_step ** 2) + (down_step ** 2));
-                if (total_distance > 2000 && sillyButton.hidden) showSillyButton();
 
-                button.style.left = `${left_pos}px`;
-                button.style.top = `${top_pos}px`;
+            // send the button back to the middle of the screen if it disappears across any of the window borders
+            if (button.offsetLeft >= window.innerWidth ||
+                button.offsetTop >= window.innerHeight ||
+                button.offsetLeft + button.offsetWidth <= 0 ||
+                button.offsetTop + button.offsetHeight <= 0) {
+                button.style.left = `${random(window.innerWidth - button.offsetWidth - (2 * paddingX), button.offsetWidth + (2 * paddingX)) - left_offset}px`;
+                button.style.top = `${random(window.innerHeight - button.offsetHeight - (2 * paddingY), button.offsetHeight + (2 * paddingY)) - top_offset}px`;
             }
-        }, 2);
+        }
     }
 }
 
+// generate a random number between min and max
 function random(min, max) {
     return Math.random() * (max - min) + min;
 }

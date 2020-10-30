@@ -30,6 +30,7 @@ button {
 #button {
     background-color: #27A0B6;
     border-color:  #27A0B6;
+    z-index: 2;
 }
 
 #button:active {
