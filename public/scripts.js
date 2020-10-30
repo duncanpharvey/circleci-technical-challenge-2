@@ -4,57 +4,55 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function listenForButtonClick() {
-    document.querySelector('#button').addEventListener('click', () => {
+    document.querySelector('#button-to-click').addEventListener('click', () => {
         const text = document.querySelector('#hidden-text');
         text.hidden = !text.hidden; // toggle hidden status of text when button is clicked
     });
 }
 
 function listenForMouseMove() {
-    const button = document.querySelector('#button');
-    const sillyButton = document.querySelector('#silly-button');
-    button.style.left = '0px';
-    button.style.top = '0px';
-    const left_offset = button.offsetLeft;
-    const top_offset = button.offsetTop;
+    const buttonToClick = document.querySelector('#button-to-click');
+    const sillyToggleButton = document.querySelector('#silly-toggle-button');
+    buttonToClick.style.left = '0px';
+    buttonToClick.style.top = '0px';
+    const leftOffset = buttonToClick.offsetLeft;
+    const topOffset = buttonToClick.offsetTop;
     const paddingX = 80;
     const paddingY = 120;
-    var total_distance = 0;
+    var totalDistance = 0;
     var silly = false;
 
     startSilliness();
 
     // show button to stop if threshold distance hasn't been exceeded and 30 seconds have passed
-    window.setTimeout(showSillyButton, 30000);
+    window.setTimeout(showSillyToggleButton, 30000);
 
     function startSilliness() {
         if (silly) return;
         document.addEventListener('mousemove', moveButton);
-        document.addEventListener('touchmove', moveButton);
-        sillyButton.removeEventListener('click', startSilliness);
-        sillyButton.addEventListener('click', stopSilliness);
-        button.textContent = 'Click!';
-        sillyButton.textContent = 'Stop Silliness!';
-        sillyButton.classList = ['stop'];
+        sillyToggleButton.removeEventListener('click', startSilliness);
+        sillyToggleButton.addEventListener('click', stopSilliness);
+        buttonToClick.textContent = 'Click!';
+        sillyToggleButton.textContent = 'Stop Silliness!';
+        sillyToggleButton.classList = ['stop'];
         silly = true;
     }
 
     function stopSilliness() {
         if (!silly) return;
         document.removeEventListener('mousemove', moveButton);
-        document.removeEventListener('touchmove', moveButton);
-        sillyButton.removeEventListener('click', stopSilliness);
-        sillyButton.addEventListener('click', startSilliness);
-        button.style.left = '0px';
-        button.style.top = '0px';
-        button.textContent = 'Ok, Click now!';
-        sillyButton.textContent = 'Start Silliness!';
-        sillyButton.classList = ['start'];
+        sillyToggleButton.removeEventListener('click', stopSilliness);
+        sillyToggleButton.addEventListener('click', startSilliness);
+        buttonToClick.style.left = '0px';
+        buttonToClick.style.top = '0px';
+        buttonToClick.textContent = 'Ok, Click now!';
+        sillyToggleButton.textContent = 'Start Silliness!';
+        sillyToggleButton.classList = ['start'];
         silly = false;
     }
 
-    function showSillyButton() {
-        sillyButton.hidden = false;
+    function showSillyToggleButton() {
+        sillyToggleButton.hidden = false;
     }
 
     /*
@@ -66,33 +64,33 @@ function listenForMouseMove() {
 
     function moveButton(event) {
         // check if the cursor is inside an ellipse with a width and height of the button (plus padding)
-        while (Math.sqrt((((button.offsetLeft + (button.offsetWidth / 2) - event.clientX) ** 2) / ((paddingX + (button.offsetWidth / 2)) ** 2)) + (((button.offsetTop + (button.offsetHeight / 2) - event.clientY) ** 2)) / ((paddingY + (button.offsetHeight / 2)) ** 2)) <= 1) {
-            var dist = Math.sqrt(((button.offsetLeft + (button.offsetWidth / 2) - event.clientX)) ** 2 + ((button.offsetTop + (button.offsetHeight / 2) - event.clientY)) ** 2);
+        while (Math.sqrt((((buttonToClick.offsetLeft + (buttonToClick.offsetWidth / 2) - event.clientX) ** 2) / ((paddingX + (buttonToClick.offsetWidth / 2)) ** 2)) + (((buttonToClick.offsetTop + (buttonToClick.offsetHeight / 2) - event.clientY) ** 2)) / ((paddingY + (buttonToClick.offsetHeight / 2)) ** 2)) <= 1) {
+            var dist = Math.sqrt(((buttonToClick.offsetLeft + (buttonToClick.offsetWidth / 2) - event.clientX)) ** 2 + ((buttonToClick.offsetTop + (buttonToClick.offsetHeight / 2) - event.clientY)) ** 2);
             
             // take a step away from the cursor along the imaginary line connecting the center of the button and the cursor
             // scale step based on distance from cursor to center of button (nothing significant about the factor of 3, it seemed to work best)
-            var right_step = (button.offsetLeft + (button.offsetWidth / 2) - event.clientX) * 3 / dist;
-            var down_step = (button.offsetTop + (button.offsetHeight / 2) - event.clientY) * 3 / dist;
+            var rightStep = (buttonToClick.offsetLeft + (buttonToClick.offsetWidth / 2) - event.clientX) * 3 / dist;
+            var downStep = (buttonToClick.offsetTop + (buttonToClick.offsetHeight / 2) - event.clientY) * 3 / dist;
 
             // reposition button away from cursor
-            var left_pos = parseInt(button.style.left.replace('px', '')) + right_step;
-            var top_pos = parseInt(button.style.top.replace('px', '')) + down_step;
+            var leftPos = parseInt(buttonToClick.style.left.replace('px', '')) + rightStep;
+            var topPos = parseInt(buttonToClick.style.top.replace('px', '')) + downStep;
 
-            button.style.left = `${left_pos}px`;
-            button.style.top = `${top_pos}px`;
+            buttonToClick.style.left = `${leftPos}px`;
+            buttonToClick.style.top = `${topPos}px`;
 
             // track total distance traveled by the box. Show button to stop once it exceeds the threshold
-            total_distance += Math.sqrt((right_step ** 2) + (down_step ** 2));
-            if (total_distance > 2000 && sillyButton.hidden) showSillyButton();
+            totalDistance += Math.sqrt((rightStep ** 2) + (downStep ** 2));
+            if (totalDistance > 2400 && sillyToggleButton.hidden) showSillyToggleButton();
 
 
             // send the button back to the middle of the screen if it disappears across any of the window borders
-            if (button.offsetLeft >= window.innerWidth ||
-                button.offsetTop >= window.innerHeight ||
-                button.offsetLeft + button.offsetWidth <= 0 ||
-                button.offsetTop + button.offsetHeight <= 0) {
-                button.style.left = `${random(window.innerWidth - button.offsetWidth - (2 * paddingX), button.offsetWidth + (2 * paddingX)) - left_offset}px`;
-                button.style.top = `${random(window.innerHeight - button.offsetHeight - (2 * paddingY), button.offsetHeight + (2 * paddingY)) - top_offset}px`;
+            if (buttonToClick.offsetLeft >= window.innerWidth ||
+                buttonToClick.offsetTop >= window.innerHeight ||
+                buttonToClick.offsetLeft + buttonToClick.offsetWidth <= 0 ||
+                buttonToClick.offsetTop + buttonToClick.offsetHeight <= 0) {
+                buttonToClick.style.left = `${random(window.innerWidth - buttonToClick.offsetWidth - (2 * paddingX), buttonToClick.offsetWidth + (2 * paddingX)) - leftOffset}px`;
+                buttonToClick.style.top = `${random(window.innerHeight - buttonToClick.offsetHeight - (2 * paddingY), buttonToClick.offsetHeight + (2 * paddingY)) - topOffset}px`;
             }
         }
     }

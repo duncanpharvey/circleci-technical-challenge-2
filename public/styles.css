@@ -27,33 +27,33 @@ button {
     width: 240px;
 }
 
-#button {
+#button-to-click {
     background-color: #27A0B6;
     border-color:  #27A0B6;
     z-index: 2;
 }
 
-#button:active {
+#button-to-click:active {
     background-color: #FFFFFF;
     color: #27A0B6;
 }
 
-#silly-button.start {
+#silly-toggle-button.start {
     background-color: green;
     border-color:green;
 }
 
-#silly-button.stop {
+#silly-toggle-button.stop {
     background-color: red;
     border-color: red;
 }
 
-#silly-button.start:active {
+#silly-toggle-button.start:active {
     background-color: #FFFFFF;
     color: green;
 }
 
-#silly-button.stop:active {
+#silly-toggle-button.stop:active {
     background-color: #FFFFFF;
     color: red;
 }

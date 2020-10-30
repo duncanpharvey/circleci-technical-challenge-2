@@ -23,13 +23,13 @@ describe('Button Clicks', () => {
         });
 
         it('should hide text after two clicks', () => {
-            const button = browser.document.querySelector('#button');
+            const button = browser.document.querySelector('#button-to-click');
             for (i = 0; i < 2; i++) button.click();
             assert.isTrue(browser.document.querySelector('#hidden-text').hidden);
         });
 
         it('should hide text after 100 clicks', () => {
-            const button = browser.document.querySelector('#button');
+            const button = browser.document.querySelector('#button-to-click');
             for (i = 0; i < 100; i++) button.click();
             assert.isTrue(browser.document.querySelector('#hidden-text').hidden);
         });
@@ -37,19 +37,19 @@ describe('Button Clicks', () => {
 
     describe('Show Text', () => {
         it('should show text after one click', () => {
-            const button = browser.document.querySelector('#button');
+            const button = browser.document.querySelector('#button-to-click');
             button.click();
             assert.isFalse(browser.document.querySelector('#hidden-text').hidden);
         });
 
         it('should show text after three clicks', () => {
-            const button = browser.document.querySelector('#button');
+            const button = browser.document.querySelector('#button-to-click');
             for (i = 0; i < 3; i++) button.click();
             assert.isFalse(browser.document.querySelector('#hidden-text').hidden);
         });
 
         it('should show text after 101 clicks', () => {
-            const button = browser.document.querySelector('#button');
+            const button = browser.document.querySelector('#button-to-click');
             for (i = 0; i < 101; i++) button.click();
             assert.isFalse(browser.document.querySelector('#hidden-text').hidden);
         });
