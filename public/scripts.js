@@ -92,8 +92,8 @@ function listenForMouseMove() {
                 buttonToClick.offsetTop >= window.innerHeight ||
                 buttonToClick.offsetLeft + buttonToClick.offsetWidth <= 0 ||
                 buttonToClick.offsetTop + buttonToClick.offsetHeight <= 0) {
-                buttonToClick.style.left = `${random(window.innerWidth - buttonToClick.offsetWidth - (2 * paddingX), buttonToClick.offsetWidth + (2 * paddingX)) - leftOffset}px`;
-                buttonToClick.style.top = `${random(window.innerHeight - buttonToClick.offsetHeight - (2 * paddingY), buttonToClick.offsetHeight + (2 * paddingY)) - topOffset}px`;
+                buttonToClick.style.left = `${random(window.innerWidth - buttonToClick.offsetWidth, 0) - leftOffset}px`;
+                buttonToClick.style.top = `${random(window.innerHeight - buttonToClick.offsetHeight, 0) - topOffset}px`;
             }
         }
     }
