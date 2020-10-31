@@ -13,7 +13,7 @@ This app uses an express server in Node.js to serve the static html, js, css, an
 
 ## Tests
 
-The tests to verify app functionality are written using the [Mocha](https://github.com/mochajs/mocha) testing framework along with a headless browser provided by [zombie.js](http://zombie.js.org/).
+The tests use the [Mocha](https://github.com/mochajs/mocha) testing framework along with a headless browser provided by [zombie.js](http://zombie.js.org/).
 
 ## Build and Deployment
 
@@ -24,4 +24,4 @@ When code is pushed to the repository, CircleCI does the following:
 * Send a Slack notification depending on build success or failure
 * Run Lighthouse performance report and send results to Slack
 
-Each of these steps makes utilizes the relevant orb in the config
+Each of these steps makes use of the relevant orb in the config

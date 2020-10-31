@@ -15,8 +15,6 @@ function listenForMouseMove() {
     const sillyToggleButton = document.querySelector('#silly-toggle-button');
     buttonToClick.style.left = '0px';
     buttonToClick.style.top = '0px';
-    const leftOffset = buttonToClick.offsetLeft;
-    const topOffset = buttonToClick.offsetTop;
     const paddingX = 80;
     const paddingY = 120;
     var totalDistance = 0;
@@ -36,7 +34,7 @@ function listenForMouseMove() {
         sillyToggleButton.removeEventListener('click', startSilliness);
         sillyToggleButton.addEventListener('click', stopSilliness);
         buttonToClick.textContent = 'Click!';
-        sillyToggleButton.textContent = 'Stop Silliness!';
+        sillyToggleButton.textContent = 'Stop the Silliness!';
         sillyToggleButton.classList = ['stop'];
         silly = true;
     }
@@ -49,7 +47,7 @@ function listenForMouseMove() {
         buttonToClick.style.left = '0px';
         buttonToClick.style.top = '0px';
         buttonToClick.textContent = 'Ok, Click now!';
-        sillyToggleButton.textContent = 'Start Silliness!';
+        sillyToggleButton.textContent = 'Start the Silliness!';
         sillyToggleButton.classList = ['start'];
         silly = false;
     }
@@ -67,17 +65,25 @@ function listenForMouseMove() {
 
     function moveButton(event) {
         // check if the cursor is inside an ellipse with a width and height of the button (plus padding)
+        var count = 0
         while (Math.sqrt((((buttonToClick.offsetLeft + (buttonToClick.offsetWidth / 2) - event.clientX) ** 2) / ((paddingX + (buttonToClick.offsetWidth / 2)) ** 2)) + (((buttonToClick.offsetTop + (buttonToClick.offsetHeight / 2) - event.clientY) ** 2)) / ((paddingY + (buttonToClick.offsetHeight / 2)) ** 2)) <= 1) {
             var dist = Math.sqrt(((buttonToClick.offsetLeft + (buttonToClick.offsetWidth / 2) - event.clientX)) ** 2 + ((buttonToClick.offsetTop + (buttonToClick.offsetHeight / 2) - event.clientY)) ** 2);
-            
+
             // take a step away from the cursor along the imaginary line connecting the center of the button and the cursor
             // scale step based on distance from cursor to center of button (nothing significant about the factor of 3, it seemed to work best)
             var rightStep = (buttonToClick.offsetLeft + (buttonToClick.offsetWidth / 2) - event.clientX) * 3 / dist;
             var downStep = (buttonToClick.offsetTop + (buttonToClick.offsetHeight / 2) - event.clientY) * 3 / dist;
 
             // reposition button away from cursor
-            var leftPos = parseInt(buttonToClick.style.left.replace('px', '')) + rightStep;
-            var topPos = parseInt(buttonToClick.style.top.replace('px', '')) + downStep;
+            var leftPos = parseFloat(buttonToClick.style.left.replace('px', '')) + rightStep;
+            var topPos = parseFloat(buttonToClick.style.top.replace('px', '')) + downStep;
+
+            // only move button if it hasn't run into a border
+            if (rightStep < 0) leftPos = Math.max(-buttonToClick.parentElement.offsetLeft, leftPos);
+            else if (rightStep > 0) leftPos = Math.min(window.innerWidth - buttonToClick.offsetWidth - buttonToClick.parentElement.offsetLeft, leftPos);
+
+            if (downStep < 0) topPos = Math.max(-buttonToClick.parentElement.offsetTop, topPos);
+            else if (downStep > 0) topPos = Math.min(window.innerHeight - buttonToClick.offsetHeight - buttonToClick.parentElement.offsetTop, topPos);
 
             buttonToClick.style.left = `${leftPos}px`;
             buttonToClick.style.top = `${topPos}px`;
@@ -86,14 +92,19 @@ function listenForMouseMove() {
             totalDistance += Math.sqrt((rightStep ** 2) + (downStep ** 2));
             if (totalDistance > distanceThreshold && sillyToggleButton.hidden) showSillyToggleButton();
 
+            // send the button back to the middle of the screen if it is pushed to a corner
+            if (Number(buttonToClick.offsetLeft <= 0) +
+                Number(buttonToClick.offsetTop <= 0) +
+                Number(buttonToClick.offsetLeft + buttonToClick.offsetWidth >= window.innerWidth) +
+                Number(buttonToClick.offsetTop + buttonToClick.offsetHeight >= window.innerHeight) == 2) {
+                buttonToClick.style.left = `${random(window.innerWidth - buttonToClick.offsetWidth, 0) - buttonToClick.parentElement.offsetLeft}px`;
+                buttonToClick.style.top = `${random(window.innerHeight - buttonToClick.offsetHeight, 0) - buttonToClick.parentElement.offsetTop}px`;
+            }
 
-            // send the button back to the middle of the screen if it disappears across any of the window borders
-            if (buttonToClick.offsetLeft >= window.innerWidth ||
-                buttonToClick.offsetTop >= window.innerHeight ||
-                buttonToClick.offsetLeft + buttonToClick.offsetWidth <= 0 ||
-                buttonToClick.offsetTop + buttonToClick.offsetHeight <= 0) {
-                buttonToClick.style.left = `${random(window.innerWidth - buttonToClick.offsetWidth, 0) - leftOffset}px`;
-                buttonToClick.style.top = `${random(window.innerHeight - buttonToClick.offsetHeight, 0) - topOffset}px`;
+            count++;
+            if (count > 300) {
+                console.log('infinite loop avoided');
+                break;
             }
         }
     }

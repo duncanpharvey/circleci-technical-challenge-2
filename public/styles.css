@@ -9,6 +9,8 @@ body {
 }
 
 div {
+    display: block;
+    margin: 12px;
     text-align: center;
 }
 
@@ -21,10 +23,14 @@ button {
     font-family: inherit;
     font-size: 1em;
     height: 100px;
-    margin: 12px;
     letter-spacing: 1px;
     position: relative;
-    width: 240px;
+    width: 300px;
+}
+
+#button-anchor {
+    display: inline-block;
+    margin: 0px;
 }
 
 #button-to-click {
