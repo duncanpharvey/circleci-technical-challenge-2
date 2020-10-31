@@ -31,6 +31,7 @@ function listenForMouseMove() {
     function startSilliness() {
         if (silly) return;
         document.addEventListener('mousemove', moveButton);
+        document.addEventListener('mousedown', moveButton);
         sillyToggleButton.removeEventListener('click', startSilliness);
         sillyToggleButton.addEventListener('click', stopSilliness);
         buttonToClick.textContent = 'Click!';
@@ -42,6 +43,7 @@ function listenForMouseMove() {
     function stopSilliness() {
         if (!silly) return;
         document.removeEventListener('mousemove', moveButton);
+        document.removeEventListener('mousedown', moveButton);
         sillyToggleButton.removeEventListener('click', stopSilliness);
         sillyToggleButton.addEventListener('click', startSilliness);
         buttonToClick.style.left = '0px';
