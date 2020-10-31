@@ -58,16 +58,9 @@ function listenForMouseMove() {
         sillyToggleButton.hidden = false;
     }
 
-    /*
-        left = button.offsetLeft
-        top = button.offsetTop
-        right = button.offsetLeft + button.offsetWidth
-        bottom = button.offsetTop + button.offsetHeight
-    */
-
     function moveButton(event) {
+        var count = 0;
         // check if the cursor is inside an ellipse with a width and height of the button (plus padding)
-        var count = 0
         while (Math.sqrt((((buttonToClick.offsetLeft + (buttonToClick.offsetWidth / 2) - event.clientX) ** 2) / ((paddingX + (buttonToClick.offsetWidth / 2)) ** 2)) + (((buttonToClick.offsetTop + (buttonToClick.offsetHeight / 2) - event.clientY) ** 2)) / ((paddingY + (buttonToClick.offsetHeight / 2)) ** 2)) <= 1) {
             var dist = Math.sqrt(((buttonToClick.offsetLeft + (buttonToClick.offsetWidth / 2) - event.clientX)) ** 2 + ((buttonToClick.offsetTop + (buttonToClick.offsetHeight / 2) - event.clientY)) ** 2);
 
@@ -99,8 +92,13 @@ function listenForMouseMove() {
                 Number(buttonToClick.offsetTop <= 0) +
                 Number(buttonToClick.offsetLeft + buttonToClick.offsetWidth >= window.innerWidth) +
                 Number(buttonToClick.offsetTop + buttonToClick.offsetHeight >= window.innerHeight) == 2) {
-                buttonToClick.style.left = `${random(window.innerWidth - buttonToClick.offsetWidth, 0) - buttonToClick.parentElement.offsetLeft}px`;
-                buttonToClick.style.top = `${random(window.innerHeight - buttonToClick.offsetHeight, 0) - buttonToClick.parentElement.offsetTop}px`;
+                
+                const tan = Math.atan2((buttonToClick.offsetTop + (buttonToClick.offsetHeight / 2) - event.clientY), (buttonToClick.offsetLeft + (buttonToClick.offsetWidth / 2) - event.clientX)) * 180 / Math.PI;
+
+                if ((90 <= tan && tan < 155) || (-155 <= tan && tan < -90)) buttonToClick.style.left = `${buttonToClick.offsetWidth - buttonToClick.parentElement.offsetLeft}px`; // right
+                else if ((-180 <= tan && tan < -155) || (-15 <= tan && tan < -0)) buttonToClick.style.top = `${buttonToClick.offsetHeight - buttonToClick.parentElement.offsetTop}px`; // down
+                else if ((-90 <= tan && tan < -15) || (15 <= tan && tan < 90)) buttonToClick.style.left = `${window.innerWidth - (2 * buttonToClick.offsetWidth) - buttonToClick.parentElement.offsetLeft}px`; // left
+                else if ((0 <= tan && tan < 15) || (155 <= tan && tan < 180)) buttonToClick.style.top = `${window.innerHeight - (2 * buttonToClick.offsetHeight) - buttonToClick.parentElement.offsetTop}px`; // up
             }
 
             count++;
@@ -110,9 +108,4 @@ function listenForMouseMove() {
             }
         }
     }
-}
-
-// generate a random number between min and max
-function random(min, max) {
-    return Math.random() * (max - min) + min;
 }
